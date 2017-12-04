@@ -38,6 +38,8 @@ def func(x, a, b, c):
 def dexp_func(x, a, b, c, f, g):
 	return (a * np.exp(-b * x)) + (f * np.exp(-g * x)) + c
 
+
+	
 #find all files with ".dat" ending
 for file in os.listdir(os.getcwd()):
 	if file.endswith(".dat"):
@@ -57,24 +59,28 @@ for idx, item in enumerate(filelist):
 	temp_arr = []
 	temp_arr = np.genfromtxt(item, delimiter = '\t', dtype = 'str',)
 	
-	#convert data array to float for fitting
-	data_arr = temp_arr.astype(np.float)
+	#convert data array to float for fitting - consider changing to import directly as float?!
+	temp_arr = temp_arr.astype(np.float)
+	time_arr, data_arr = np.hsplit(temp_arr, 2)	
+	time_arr = time_arr.flatten()
+	data_arr = data_arr.flatten()
 	
 	#trim the data array (sometimes the first few data points are rubbish) - currently 15 data points
 	#data_arr = np.delete(data_arr, [0,1,2,3,4,5,6,7,8,9,10])
-	data_arr = data_arr[2:900]
-	
+
+	data_arr = data_arr[5:900]
+	time_arr = time_arr[5:900]
 	#generate x axis (time)
-	time_arr = np.zeros(len(data_arr))
+	
+	"""time_arr = np.zeros(len(data_arr))
 	for i in range(0,len(time_arr)):
 		time_arr[i] = i*(time_step*1e-6)
 	
-	#sigma = div0(1, data_arr)
+	#sigma = div0(1, data_arr)"""
 	
 	
 	#fit data with func()
-	popt, pcov = curve_fit(func, time_arr, data_arr, p0=(1000,400,1)) #, sigma=sigma, absolute_sigma=True
-	
+	popt, pcov = curve_fit(func, time_arr, data_arr, p0=(500,4000,20)) #, sigma=sigma, absolute_sigma=True
 	error = [] 
 	for i in range(len(popt)):
 		try:
